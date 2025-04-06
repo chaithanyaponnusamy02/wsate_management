@@ -1,26 +1,22 @@
+// server.js
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const foodRoutes = require("./routes/foodroutes");
+const userRoutes = require("./routes/userroutes");
 
 const app = express();
-
-// Middleware
 app.use(express.json());
 app.use(cors());
 
-// MongoDB Connection
-const mongoURI = process.env.MONGO_URI;
-mongoose
-  .connect(mongoURI)
-  .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+app.use("/api/foods", foodRoutes);
+app.use("/api/users", userRoutes);
 
-// Sample Route
 app.get("/", (req, res) => {
-  res.send("Welcome to the backend API!");
+  res.send("Welcome to MySQL-powered Backend!");
 });
 
-// Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

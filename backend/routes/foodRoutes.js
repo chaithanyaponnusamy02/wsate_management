@@ -1,25 +1,33 @@
+// routes/foodroutes.js
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// Add a new food listing
-router.post("/add", (req, res) => {
-  const { title, description, location, expiryDate, contact } = req.body;
-  const sql = "INSERT INTO food_listings (title, description, location, expiry_date, contact) VALUES (?, ?, ?, ?, ?)";
-  
-  db.query(sql, [title, description, location, expiryDate, contact], (err, result) => {
+// Get all foods
+router.get("/", (req, res) => {
+  db.query("SELECT * FROM foods", (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: "Food listed successfully!", id: result.insertId });
+    res.json(result);
   });
 });
 
-// Get all food listings
-router.get("/list", (req, res) => {
-  const sql = "SELECT * FROM food_listings";
-  
-  db.query(sql, (err, results) => {
+// Add food
+router.post("/", (req, res) => {
+  const { name, description, price } = req.body;
+  db.query("INSERT INTO foods (name, description, price) VALUES (?, ?, ?)",
+    [name, description, price],
+    (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Food added successfully" });
+    }
+  );
+});
+
+// Delete food
+router.delete("/:id", (req, res) => {
+  db.query("DELETE FROM foods WHERE id = ?", [req.params.id], (err) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
+    res.json({ message: "Food deleted successfully" });
   });
 });
 
